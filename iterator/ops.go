@@ -4,8 +4,7 @@ func Limit[T any](iter Iterator[T], limit int) Iterator[T] {
 	i := 0
 	limiter := FromIterFunc[T](func() (T, bool) {
 		if i >= limit || !iter.Next() {
-			var zeroVal T
-			return zeroVal, false
+			return none[T]()
 		}
 
 		i++
@@ -27,16 +26,14 @@ func Filter[T any](iter Iterator[T], filter func(T) bool) Iterator[T] {
 			}
 		}
 
-		var v T
-		return v, false
+		return none[T]()
 	})
 }
 
 func Map[T any, S any](iter Iterator[T], m func(T) S) Iterator[S] {
 	return FromIterFunc(func() (S, bool) {
 		if !iter.Next() {
-			var v S
-			return v, false
+			return none[S]()
 		}
 
 		return m(iter.Value()), true

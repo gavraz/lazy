@@ -1,7 +1,12 @@
 package iterator
 
 type Iterator[T any] interface {
+	// Next advances to the next element if such an element exists.
+	// It returns true iff the next element exists.
 	Next() bool
+
+	// Value returns the current value of the iterator.
+	// Invoking Value on a drained iterator should return the zero value of T.
 	Value() T
 }
 
