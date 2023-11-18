@@ -54,5 +54,3 @@ func Slice[T any](iter Iterator[T]) []T {
 
 	return all
 }
-
-// TODO: paginate
