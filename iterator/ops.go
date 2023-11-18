@@ -56,10 +56,14 @@ func Paginate[T any](iter Iterator[T], page, count int) Iterator[T] {
 	return Limit(skipped, count)
 }
 
+type Sizer interface {
+	Size() int
+}
+
 func Slice[T any](iter Iterator[T]) []T {
 	var all []T
 
-	sized, ok := iter.(SizedIterator[T])
+	sized, ok := iter.(Sizer)
 	if ok {
 		all = make([]T, 0, sized.Size())
 	}
