@@ -47,5 +47,3 @@ func Test_FromValues(t *testing.T) {
 	assert.Equal(t, 5, vals.Value())
 	assert.False(t, vals.Next())
 }
-
-// TODO: decide inclusive exclusive ranges
