@@ -46,8 +46,9 @@ func FromSlice[T any](data []T) Iterator[T] {
 			return none[T]()
 		}
 
+		v := data[i]
 		i++
-		return data[i], true
+		return v, true
 	})
 }
 
