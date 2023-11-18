@@ -22,6 +22,18 @@ func Filter[T any](filter func(T) bool) Op[T] {
 	}
 }
 
+func Discard[T any](count int) Op[T] {
+	return func(iter iterator.Iterator[T]) iterator.Iterator[T] {
+		return iterator.Discard(iter, count)
+	}
+}
+
+func Paginate[T any](page, count int) Op[T] {
+	return func(iter iterator.Iterator[T]) iterator.Iterator[T] {
+		return iterator.Paginate(iter, page, count)
+	}
+}
+
 type SlicerIterator[T any] struct {
 	iterator.Iterator[T]
 }

@@ -40,6 +40,22 @@ func Map[T any, S any](iter Iterator[T], m func(T) S) Iterator[S] {
 	})
 }
 
+func Discard[T any](iter Iterator[T], count int) Iterator[T] {
+	i := 0
+	return FromFunc(func() (T, bool) {
+		for ; i < count && iter.Next(); i++ {
+		}
+
+		ok := iter.Next()
+		return iter.Value(), ok
+	})
+}
+
+func Paginate[T any](iter Iterator[T], page, count int) Iterator[T] {
+	skipped := Discard(iter, (page-1)*count)
+	return Limit(skipped, count)
+}
+
 func Slice[T any](iter Iterator[T]) []T {
 	var all []T
 

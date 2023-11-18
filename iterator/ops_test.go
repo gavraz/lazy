@@ -22,3 +22,19 @@ func Test_Filter(t *testing.T) {
 
 	assert.True(t, slices.Equal(Slice(d2), Slice(even)))
 }
+
+func Test_Discard(t *testing.T) {
+	d := Discard(FromValues(1, 2, 3, 4, 5), 3)
+	assert.True(t, slices.Equal([]int{4, 5}, Slice(d)))
+
+	d = Discard(FromValues(1, 2, 3), 10)
+	assert.True(t, slices.Equal([]int{}, Slice(d)))
+}
+
+func Test_Paginate(t *testing.T) {
+	p := Paginate(FromValues(1, 2, 3), 1, 3)
+	assert.True(t, slices.Equal([]int{1, 2, 3}, Slice(p)))
+
+	p = Paginate(FromValues(1, 2, 3, 3, 4, 5, 6, 7), 2, 3)
+	assert.True(t, slices.Equal([]int{3, 4, 5}, Slice(p)))
+}
