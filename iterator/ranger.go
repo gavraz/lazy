@@ -1,15 +1,17 @@
 package iterator
 
-import "golang.org/x/exp/constraints"
+import (
+	"golang.org/x/exp/constraints"
+)
 
 type Numeric interface {
 	constraints.Integer | constraints.Float
 }
 
-// ByDelta returns an iterator for a range [begin, begin+delta, ..., end).
+// Range returns an iterator for a range [begin, begin+delta, ..., end).
 // Values are assumed to be non-negative.
 // Note: end=0 represents infinity.
-func ByDelta[T Numeric](begin, end, delta T) Iterator[T] {
+func Range[T Numeric](begin, end, delta T) Iterator[T] {
 	curr := begin
 	return FromFunc(func() (T, bool) {
 		next := curr + delta
@@ -30,7 +32,7 @@ type Ranger[T Numeric] struct {
 }
 
 func (r *Ranger[T]) update() {
-	r.Iterator = ByDelta[T](r.begin, r.end, r.delta)
+	r.Iterator = Range[T](r.begin, r.end, r.delta)
 }
 
 func (r *Ranger[T]) To(end T) *Ranger[T] {
@@ -53,5 +55,5 @@ func From[T Numeric](begin T) *Ranger[T] {
 
 // To returns an iterator for the range: [0, end)
 func To(end int) Iterator[int] {
-	return ByDelta[int](0, end, 1)
+	return Range[int](0, end, 1)
 }
