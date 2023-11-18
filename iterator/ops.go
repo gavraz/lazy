@@ -2,7 +2,7 @@ package iterator
 
 func Limit[T any](iter Iterator[T], limit int) Iterator[T] {
 	i := 0
-	limiter := FromIterFunc[T](func() (T, bool) {
+	limiter := FromFunc[T](func() (T, bool) {
 		if i >= limit || !iter.Next() {
 			return none[T]()
 		}
@@ -18,7 +18,7 @@ func Limit[T any](iter Iterator[T], limit int) Iterator[T] {
 }
 
 func Filter[T any](iter Iterator[T], filter func(T) bool) Iterator[T] {
-	return FromIterFunc(func() (T, bool) {
+	return FromFunc(func() (T, bool) {
 		for iter.Next() {
 			v := iter.Value()
 			if filter(v) {
@@ -31,7 +31,7 @@ func Filter[T any](iter Iterator[T], filter func(T) bool) Iterator[T] {
 }
 
 func Map[T any, S any](iter Iterator[T], m func(T) S) Iterator[S] {
-	return FromIterFunc(func() (S, bool) {
+	return FromFunc(func() (S, bool) {
 		if !iter.Next() {
 			return none[S]()
 		}

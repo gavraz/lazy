@@ -7,13 +7,13 @@ func none[T any]() (T, bool) {
 	return v, false
 }
 
-func FromIterFunc[T any](next func() (T, bool)) Iterator[T] {
+func FromFunc[T any](next func() (T, bool)) Iterator[T] {
 	return &FuncIterator[T]{f: next}
 }
 
-func FromDelta[T constraints.Ordered](begin, end, delta T) Iterator[T] {
+func ByDelta[T constraints.Ordered](begin, end, delta T) Iterator[T] {
 	curr := begin
-	return FromIterFunc(func() (T, bool) {
+	return FromFunc(func() (T, bool) {
 		next := curr + delta
 		if next > end {
 			return none[T]()
@@ -30,18 +30,18 @@ func FromDelta[T constraints.Ordered](begin, end, delta T) Iterator[T] {
 //		To(y).By(d)
 
 func To(end int) Iterator[int] {
-	return FromDelta[int](0, end, 1)
+	return ByDelta[int](0, end, 1)
 }
 
-func FromGenerator[T any](rnd func() T) Iterator[T] {
-	return FromIterFunc(func() (T, bool) {
+func Generate[T any](rnd func() T) Iterator[T] {
+	return FromFunc(func() (T, bool) {
 		return rnd(), true
 	})
 }
 
 func FromSlice[T any](data []T) Iterator[T] {
 	i := 0
-	return FromIterFunc(func() (T, bool) {
+	return FromFunc(func() (T, bool) {
 		if i >= len(data) {
 			return none[T]()
 		}
