@@ -1,5 +1,7 @@
 # lazy
 
+A lazy iterator for lazy programmers.
+
 ### Build
 ```go
 r := lazy.Build(
@@ -9,24 +11,31 @@ r := lazy.Build(
         return x%2 == 0
     }), lazy.Map(func(v int) int {
         return v * v
-    }), lazy.Limit[int](3),
-)
-```
-```go
+    }), lazy.Limit[int](3))
+
 for r.Next() {
-    fmt.Print(r.Value(), ", ")
+    fmt.Print(r.Value(), " ")
 }
-```
-```
-Output: 4, 64, 16,
+
+// Output: 4 64 16
 ```
 
-### Ranges
+### Simple iteration on values
 ```go
-for i := iterator.To(10); i.Next(); {
+for i := iterator.FromValues("a", "b", "c"); i.Next(); {
     fmt.Print(i.Value(), " ")
 }
+
+// Output: a b c
 ```
+
+### Range, paginate and to slice
+```go
+ten := iterator.To(10) // 0, 1, ..., 9
+secondPage := iterator.Paginate(ten, 2, 3) // second page, assuming three elements per page
+fmt.Println(iterator.Slice(secondPage))
+
+// Output: [3 4 5]
 ```
-Output: 0 1 2 3 4 5 6 7 8 9
-```
+
+
