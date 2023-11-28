@@ -4,7 +4,9 @@ A lazy iterator for lazy programmers.
 
 ### Concatenate operations and iterate easily
 ```go
-it := iterator.Generate(func() int {
+import "github.com/gavraz/lazy"
+
+it := lazy.Generate(func() int {
     return rand.Int() % 100
 }).Filter(func(x int) bool {
     return x%2 == 1
@@ -20,7 +22,7 @@ for it.Next() {
 
 ### Instantiate from values
 ```go
-for i := iterator.FromValues("a", "b", "c").Easy(); i.Next(); {
+for i := lazy.FromValues("a", "b", "c").Easy(); i.Next(); {
     fmt.Print(i.Value(), " ")
 }
 // Output: a b c
@@ -28,7 +30,7 @@ for i := iterator.FromValues("a", "b", "c").Easy(); i.Next(); {
 
 ### Range, paginate and slice
 ```go
-ten := iterator.To(10) // 0, 1, ..., 9
+ten := lazy.To(10) // 0, 1, ..., 9
 secondPage := ten.Paginate(2, 3)
 fmt.Println(secondPage.Slice())
 // Output: [3 4 5]
