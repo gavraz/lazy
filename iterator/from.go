@@ -6,7 +6,7 @@ func none[T any]() (T, bool) {
 }
 
 func FromFunc[T any](next func() (T, bool)) Iterator[T] {
-	return &FuncIterator[T]{f: next}
+	return Iterator[T]{f: next, size: unknown}
 }
 
 func Generate[T any](rnd func() T) Iterator[T] {
@@ -17,7 +17,7 @@ func Generate[T any](rnd func() T) Iterator[T] {
 
 func FromSlice[T any](data []T) Iterator[T] {
 	i := 0
-	return FromFunc(func() (T, bool) {
+	it := FromFunc(func() (T, bool) {
 		if i >= len(data) {
 			return none[T]()
 		}
@@ -26,6 +26,8 @@ func FromSlice[T any](data []T) Iterator[T] {
 		i++
 		return v, true
 	})
+	it.size = len(data)
+	return it
 }
 
 func FromValues[T any](v ...T) Iterator[T] {

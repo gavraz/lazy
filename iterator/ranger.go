@@ -31,25 +31,22 @@ type Ranger[T Numeric] struct {
 	delta T
 }
 
-func (r *Ranger[T]) update() {
-	r.Iterator = Range[T](r.begin, r.end, r.delta)
-}
-
-func (r *Ranger[T]) To(end T) *Ranger[T] {
+func (r Ranger[T]) To(end T) Ranger[T] {
 	r.end = end
-	r.update()
+	r.Iterator = Range[T](r.begin, r.end, r.delta)
 	return r
 }
 
-func (r *Ranger[T]) By(delta T) Iterator[T] {
-	r.delta = delta
-	r.update()
-	return r.Iterator
+func (r Ranger[T]) By(delta T) Iterator[T] {
+	cloned := r
+	cloned.delta = delta
+	cloned.Iterator = Range[T](cloned.begin, cloned.end, cloned.delta)
+	return cloned.Iterator
 }
 
-func From[T Numeric](begin T) *Ranger[T] {
-	r := &Ranger[T]{begin: begin, end: 0, delta: 1}
-	r.update()
+func From[T Numeric](begin T) Ranger[T] {
+	r := Ranger[T]{begin: begin, end: 0, delta: 1}
+	r.Iterator = Range[T](r.begin, r.end, r.delta)
 	return r
 }
 

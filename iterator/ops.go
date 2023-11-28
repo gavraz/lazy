@@ -1,26 +1,31 @@
 package iterator
 
-func Limit[T any](iter Iterator[T], limit int) Iterator[T] {
+const unknown = -1
+
+type Iterator[T any] struct {
+	f    func() (T, bool)
+	size int
+}
+
+func (it Iterator[T]) Limit(limit int) Iterator[T] {
 	i := 0
 	limiter := FromFunc[T](func() (T, bool) {
-		if i >= limit || !iter.Next() {
+		v, ok := it.f()
+		if i >= limit || !ok {
 			return none[T]()
 		}
 
 		i++
-		return iter.Value(), true
+		return v, true
 	})
 
-	return &SizedIterator[T]{
-		Iterator: limiter,
-		size:     limit,
-	}
+	limiter.size = limit
+	return limiter
 }
 
-func Filter[T any](iter Iterator[T], filter func(T) bool) Iterator[T] {
+func (it Iterator[T]) Filter(filter func(T) bool) Iterator[T] {
 	return FromFunc(func() (T, bool) {
-		for iter.Next() {
-			v := iter.Value()
+		for v, ok := it.f(); ok; v, ok = it.f() {
 			if filter(v) {
 				return v, true
 			}
@@ -30,46 +35,55 @@ func Filter[T any](iter Iterator[T], filter func(T) bool) Iterator[T] {
 	})
 }
 
-func Map[T any, S any](iter Iterator[T], m func(T) S) Iterator[S] {
-	return FromFunc(func() (S, bool) {
-		if !iter.Next() {
+func (it Iterator[T]) Map(m func(T) T) Iterator[T] {
+	return Map(it, m)
+}
+
+func Map[T any, S any](it Iterator[T], m func(T) S) Iterator[S] {
+	mp := FromFunc(func() (S, bool) {
+		v, ok := it.f()
+		if !ok {
 			return none[S]()
 		}
 
-		return m(iter.Value()), true
+		return m(v), true
 	})
+	mp.size = it.size
+	return mp
 }
 
-func Discard[T any](iter Iterator[T], count int) Iterator[T] {
+func (it Iterator[T]) Discard(count int) Iterator[T] {
 	i := 0
 	return FromFunc(func() (T, bool) {
-		for ; i < count && iter.Next(); i++ {
+		v, ok := it.f()
+		for ; i < count && ok; i++ {
+			v, ok = it.f()
 		}
 
-		ok := iter.Next()
-		return iter.Value(), ok
+		return v, ok
 	})
 }
 
-func Paginate[T any](iter Iterator[T], page, count int) Iterator[T] {
-	skipped := Discard(iter, (page-1)*count)
-	return Limit(skipped, count)
+func (it Iterator[T]) Paginate(page, count int) Iterator[T] {
+	skipped := it.Discard((page - 1) * count)
+	return skipped.Limit(count)
 }
 
-type Sizer interface {
-	Size() int
+func (it Iterator[T]) Easy() *Easy[T] {
+	return &Easy[T]{f: it}
 }
 
-func Slice[T any](iter Iterator[T]) []T {
+func (it Iterator[T]) Slice() []T {
 	var all []T
 
-	sized, ok := iter.(Sizer)
-	if ok {
-		all = make([]T, 0, sized.Size())
+	if it.size != unknown {
+		all = make([]T, 0, it.size)
 	}
 
-	for iter.Next() {
-		all = append(all, iter.Value())
+	v, ok := it.f()
+	for ok {
+		all = append(all, v)
+		v, ok = it.f()
 	}
 
 	return all
