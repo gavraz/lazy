@@ -2,40 +2,34 @@
 
 A lazy iterator for lazy programmers.
 
-### Build
+### Concatenate operations and iterate easily
 ```go
-r := lazy.Build(
-    iterator.Generate(func() int {
-        return rand.Int() % 10
-    }), lazy.Filter(func(x int) bool {
-        return x%2 == 0
-    }), lazy.Map(func(v int) int {
-        return v * v
-    }), lazy.Limit[int](3))
+it := iterator.Generate(func() int {
+    return rand.Int() % 100
+}).Filter(func(x int) bool {
+    return x%2 == 1
+}).Map(func(v int) int {
+    return v * v
+}).Limit(10).Easy()
 
-for r.Next() {
-    fmt.Print(r.Value(), " ")
+for it.Next() {
+    fmt.Println(it.Value())
 }
-
-// Output: 4 64 16
+// Output: 49 25 1 1 25 1 81 9 25 49
 ```
 
-### Simple iteration on values
+### Instantiate from values
 ```go
-for i := iterator.FromValues("a", "b", "c"); i.Next(); {
+for i := iterator.FromValues("a", "b", "c").Easy(); i.Next(); {
     fmt.Print(i.Value(), " ")
 }
-
 // Output: a b c
 ```
 
-### Range, paginate and to slice
+### Range, paginate and slice
 ```go
 ten := iterator.To(10) // 0, 1, ..., 9
-secondPage := iterator.Paginate(ten, 2, 3) // second page, assuming three elements per page
-fmt.Println(iterator.Slice(secondPage))
-
+secondPage := ten.Paginate(2, 3)
+fmt.Println(secondPage.Slice())
 // Output: [3 4 5]
 ```
-
-
