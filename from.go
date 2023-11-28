@@ -1,4 +1,4 @@
-package iterator
+package lazy
 
 func none[T any]() (T, bool) {
 	var v T

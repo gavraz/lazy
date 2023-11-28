@@ -1,4 +1,4 @@
-package iterator
+package lazy
 
 const unknown = -1
 

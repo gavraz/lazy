@@ -1,4 +1,4 @@
-package iterator
+package lazy
 
 type Easy[T any] struct {
 	v T

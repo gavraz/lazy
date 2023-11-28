@@ -1,4 +1,4 @@
-package iterator
+package lazy
 
 import (
 	"github.com/stretchr/testify/assert"
