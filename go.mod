@@ -1,4 +1,4 @@
-module github.com/lazy
+module github.com/gavraz/lazy
 
 go 1.21
 
