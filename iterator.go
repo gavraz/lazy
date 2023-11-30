@@ -69,6 +69,10 @@ func (it Iterator[T]) Paginate(page, count int) Iterator[T] {
 	return skipped.Limit(count)
 }
 
+func (it Iterator[T]) Next() (T, bool) {
+	return it.f()
+}
+
 func (it Iterator[T]) Easy() *Easy[T] {
 	return &Easy[T]{f: it}
 }
